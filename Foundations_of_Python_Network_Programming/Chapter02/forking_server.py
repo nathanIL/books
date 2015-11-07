@@ -20,24 +20,27 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def handle_request(connection, address):
+def handle_request(connection, address, size=512):
     """
     Asynchronously handle each request
     :param connection: the socket / connection object received
     :param address: the remote address
     """
     start = time.time()
+    total_data = ''
     try:
-        while True:
-            data = connection.recv(1024)
-            if data is None or data == '': break
+        while len(total_data) < size:
+            data = connection.recv(size - len(total_data))
+            if not data:
+                break
             print("[SERVER | PID {0}]: {1}".format(os.getpid(), data.rstrip()))
+            total_data += data
     except Exception as e:
         print("Error ", e.message)
     finally:
         connection.close()
         end = time.time() - start
-        print("[SERVER]: {0} closed connection after {1:.2} seconds".format(address, end))
+        print("[SERVER]: {0} closed connection after {1:.2f} seconds".format(address, end))
 
 
 def server(port, mproc):
