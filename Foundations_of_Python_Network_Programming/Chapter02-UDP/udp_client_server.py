@@ -17,7 +17,7 @@ def parse_arguments():
     server_parser = subparsers.add_parser('server', help='Run as a server')
     client_parser = subparsers.add_parser('client', help='Run as a UDP (only) client')  # TCP is boring
     server_protocol = server_parser.add_mutually_exclusive_group()
-    server_protocol.add_argument('--tcp', help='Run a as TCP server', action='store_const', const=socket.SOCK_STREAM)
+    #server_protocol.add_argument('--tcp', help='Run a as TCP server', action='store_const', const=socket.SOCK_STREAM)
     server_protocol.add_argument('--udp', help='Run as a UDP server', action='store_const', const=socket.SOCK_DGRAM)
     server_parser.add_argument('--port', help='The port on which we listen', default=51150)
     client_parser.add_argument('--server', help='The server IP')
