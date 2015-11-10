@@ -49,6 +49,7 @@ def server(port, mproc):
     s.bind(('', port))
     s.listen(mproc)
 
+    print("[SERVER]: Listening on {0}".format(s.getsockname()))
     while True:
         (connection, address) = s.accept()
         print("[SERVER]: Connection established with {0}".format(address))
