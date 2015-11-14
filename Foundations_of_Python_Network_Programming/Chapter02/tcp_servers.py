@@ -1,5 +1,5 @@
 """
-TCP Servers stuff based on book material (but not 1:1)
+Forking TCP Servers stuff based on book material (but not 1:1)
 """
 import socket
 import argparse
@@ -38,7 +38,6 @@ def handle_fixed_request(connection, address, size=512):
     :param address: the remote address
     :param size: The maximum size of each request
     """
-    print("[SERVER]: Using a fixed size request handler")
     start = time.time()
     total_data = ''
     try:
@@ -62,11 +61,11 @@ def handle_http_request(connection, address):
     :param connection: The socket
     :param address: The remote-end address
     """
-    print("[SERVER]: Using a variable size HTTP request handler")
     REQUIRED_HEADERS = ['Content-Length']
-    SUPPORTED_METHODS = ['GET']
-    # Get headers
-    headers = ''
+    SUPPORTED_METHODS = ['GET', 'POST']
+    HTTP_VERSIONS = ['HTTP/1.1']
+    headers = dict()
+    headers_raw = ''
     body = ''
 
     while True:
@@ -75,12 +74,19 @@ def handle_http_request(connection, address):
             break
         elif '\r\n' in h:
             crlf_idx = h.rfind('\r\n')
-            headers += h[:crlf_idx]
+            headers_raw += h[:crlf_idx]
             body = h[crlf_idx:]
             break
-        headers += h
+        headers_raw += h
 
     # Parse Headers
+    request_line = headers_raw.split('\n')[0].split()
+    # TODO: Validate the resource element
+    if len(request_line) != 3 or request_line[0] not in SUPPORTED_METHODS or request_line[2] not in HTTP_VERSIONS:
+        print("[ERROR]: Invalid HTTP request line: " + ' '.join(request_line))
+        return
+
+    headers = {e.split(':')[0].strip():e.split(':')[1].strip() for e in headers_raw.splitlines()[1:]}
     print(headers)
     # Get body
 
